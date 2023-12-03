@@ -16,6 +16,11 @@ fi
 
 apt update && apt upgrade -y
 
+if [ $? -ne 0 ]; then
+    echo "Failed to update system packages" >&2
+    exit 1
+fi
+
 if [ -f /var/run/reboot-required ]; then
     echo "A reboot is required in order to proceed with the install." >&2
     echo "Please reboot and re-run this script to finish the install." >&2
@@ -28,6 +33,11 @@ fi
 
 # Install the xrdp service so we have the auto start behavior
 apt install -y xrdp
+
+if [ $? -ne 0 ]; then
+    echo "Failed to install xrdp" >&2
+    exit 1
+fi
 
 systemctl stop xrdp
 systemctl stop xrdp-sesman
@@ -86,6 +96,11 @@ EOF
 # reconfigure the service
 systemctl daemon-reload
 systemctl start xrdp
+
+if [ $? -ne 0 ]; then
+    echo "Failed to start xrdp service" >&2
+    exit 1
+fi
 
 #
 # End XRDP
